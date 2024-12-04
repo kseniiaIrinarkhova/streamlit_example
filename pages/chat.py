@@ -10,4 +10,9 @@ print(st.session_state)
 # set default model
 if 'default_model' not in st.session_state:
     st.session_state['default_model'] = 'llama3-8b-8192'
+
+# set a message collection
+
+if 'messages' not in st.session_state:
+    st.session_state['messages'] = []
     print(st.session_state)
