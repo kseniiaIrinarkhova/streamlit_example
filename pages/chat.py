@@ -35,4 +35,7 @@ else:
 
 
 st.divider()
+
 #input for new messages
+new_message = st.chat_input('Type your message here', key='new_message')
+st.session_state.messages.append({'role': 'user', 'content': new_message})
