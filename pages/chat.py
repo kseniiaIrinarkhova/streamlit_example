@@ -37,6 +37,10 @@ else:
 
 st.divider()
 
-#input for new messages
-# new_message = st.chat_input('Type your message here')
-# st.session_state.messages.append({'role': 'user', 'content': new_message})
+# input for new messages
+if prompt := st.chat_input('Type a message...'):
+    # display user message in chat message container
+    with st.chat_message('user'):
+        st.markdown(prompt)
+    # add user message to chat history
+    st.session_state.messages.append({'role': 'user', 'content': prompt})
