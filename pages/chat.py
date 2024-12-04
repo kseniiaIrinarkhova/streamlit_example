@@ -16,6 +16,7 @@ if 'default_model' not in st.session_state:
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []
     print(st.session_state)
+    st.session_state.messages.append({'role': 'assistant', 'content': 'Hello! How can I help you today?'})
 
 # Sidebar
 st.sidebar.title('Chat')
@@ -37,5 +38,5 @@ else:
 st.divider()
 
 #input for new messages
-new_message = st.chat_input('Type your message here', key='new_message')
-st.session_state.messages.append({'role': 'user', 'content': new_message})
+# new_message = st.chat_input('Type your message here')
+# st.session_state.messages.append({'role': 'user', 'content': new_message})
