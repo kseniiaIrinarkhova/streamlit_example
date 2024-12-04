@@ -5,6 +5,19 @@ from groq import Groq
 # initializing groq
 client = Groq(api_key=st.secrets['GROQ_API_KEY'])
 
+#function for getting responce from groq
+def get_groq_response(prompt):
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": prompt,
+            }
+        ],
+        model=st.session_state['default_model'],
+    )
+    return chat_completion.choices[0].message.content
+
 print(st.session_state)
 
 # set default model
@@ -45,16 +58,10 @@ if prompt := st.chat_input('Type a message...'):
     # add user message to chat history
     st.session_state.messages.append({'role': 'user', 'content': prompt})
     # get response from groq
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": st.session_state.messages[-1]['content'],
-            }
-        ],
-        model=st.session_state['default_model'],
-    )
+    responce = get_groq_response(prompt)
+    # display assistant message in chat message container
     with st.chat_message('assistant'):
-        st.markdown(chat_completion.choices[0].message.content)
-    st.session_state.messages.append({'role': 'assistant', 'content': chat_completion.choices[0].message.content})
+        st.markdown(responce)
+    # add assistant message to chat history
+    st.session_state.messages.append({'role': 'assistant', 'content': responce})
     print(st.session_state.messages)
