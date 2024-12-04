@@ -44,3 +44,17 @@ if prompt := st.chat_input('Type a message...'):
         st.markdown(prompt)
     # add user message to chat history
     st.session_state.messages.append({'role': 'user', 'content': prompt})
+    # get response from groq
+    chat_completion = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": st.session_state.messages[-1]['content'],
+            }
+        ],
+        model=st.session_state['default_model'],
+    )
+    with st.chat_message('assistant'):
+        st.markdown(chat_completion.choices[0].message.content)
+    st.session_state.messages.append({'role': 'assistant', 'content': chat_completion.choices[0].message.content})
+    print(st.session_state.messages)
