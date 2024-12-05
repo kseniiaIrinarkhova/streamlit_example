@@ -20,10 +20,12 @@ if 'messages' not in st.session_state:
 
 # Sidebar
 st.sidebar.title('Chat')
+temperature = st.sidebar.slider('Temperature', min_value=0.0, max_value=1.0, value=0.5, step=0.01, key='temperature')
 
 # Main page
 st.title('Chat Page')
 st.write('Chatbot Powered by Groq and llama3-8b-8192 default model')
+
 st.divider()
 
 # display list of messages
@@ -58,6 +60,7 @@ if prompt := st.chat_input('Type a message...'):
             ],
             model=st.session_state['default_model'],
             stream=True,
+            temperature=temperature,
         )
         # create assistant response from groq response
         full_response=""
