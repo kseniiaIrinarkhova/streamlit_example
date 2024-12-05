@@ -3,6 +3,12 @@ import streamlit as st
 from groq import Groq
 import requests
 
+# function to change default LLM
+def change_model():
+    st.session_state['default_model'] = st.session_state.model
+    print(st.session_state)
+    return
+
 # initializing groq
 client = Groq(api_key=st.secrets['GROQ_API_KEY'])
 
@@ -14,9 +20,9 @@ headers = {
     "Content-Type": "application/json"
 }
 
-models = [model['id'] for model in requests.get(url, headers=headers).json()['data']] 
+models = [model['id'] for model in requests.get(url, headers=headers).json()['data'] if model['context_window'] == 8192 and model['active'] == True] 
 
-print(st.session_state)
+# print(st.session_state)
 
 # set default model
 if 'default_model' not in st.session_state:
@@ -26,12 +32,15 @@ if 'default_model' not in st.session_state:
 
 if 'messages' not in st.session_state:
     st.session_state['messages'] = []
-    print(st.session_state)
+    # print(st.session_state)
     st.session_state.messages.append({'role': 'assistant', 'content': 'Hello! How can I help you today?'})
+
 
 # Sidebar
 st.sidebar.title('Chat')
 temperature = st.sidebar.slider('Temperature', min_value=0.0, max_value=1.0, value=0.5, step=0.01, key='temperature')
+print(st.session_state['default_model'])
+st.sidebar.selectbox('Model', models, index=models.index(st.session_state['default_model']), key='model', on_change=change_model)
 
 # Main page
 st.title('Chat Page')
@@ -82,4 +91,4 @@ if prompt := st.chat_input('Type a message...'):
     
         # add assistant message to chat history
         st.session_state.messages.append({'role': 'assistant', 'content': full_response})
-        print(st.session_state.messages)
+        # print(st.session_state.messages)
