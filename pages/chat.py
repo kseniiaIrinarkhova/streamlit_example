@@ -1,9 +1,20 @@
 # importing libs
 import streamlit as st
 from groq import Groq
+import requests
 
 # initializing groq
 client = Groq(api_key=st.secrets['GROQ_API_KEY'])
+
+# get list of models
+url = "https://api.groq.com/openai/v1/models"
+
+headers = {
+    "Authorization": f"Bearer {st.secrets['GROQ_API_KEY']}",
+    "Content-Type": "application/json"
+}
+
+models = [model['id'] for model in requests.get(url, headers=headers).json()['data']] 
 
 print(st.session_state)
 
