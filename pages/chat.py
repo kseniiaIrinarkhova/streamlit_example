@@ -44,7 +44,7 @@ st.sidebar.selectbox('Model', models, index=models.index(st.session_state['defau
 
 # Main page
 st.title('Chat Page')
-st.write('Chatbot Powered by Groq and llama3-8b-8192 default model')
+st.write(f'Chatbot Powered by Groq and **{st.session_state.default_model}** as LLM')
 
 st.divider()
 
