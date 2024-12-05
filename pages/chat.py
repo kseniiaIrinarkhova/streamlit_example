@@ -5,19 +5,6 @@ from groq import Groq
 # initializing groq
 client = Groq(api_key=st.secrets['GROQ_API_KEY'])
 
-#function for getting responce from groq
-def get_groq_response(prompt):
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt,
-            }
-        ],
-        model=st.session_state['default_model'],
-    )
-    return chat_completion.choices[0].message.content
-
 print(st.session_state)
 
 # set default model
@@ -57,11 +44,28 @@ if prompt := st.chat_input('Type a message...'):
         st.markdown(prompt)
     # add user message to chat history
     st.session_state.messages.append({'role': 'user', 'content': prompt})
-    # get response from groq
-    responce = get_groq_response(prompt)
-    # display assistant message in chat message container
+
     with st.chat_message('assistant'):
-        st.markdown(responce)
-    # add assistant message to chat history
-    st.session_state.messages.append({'role': 'assistant', 'content': responce})
-    print(st.session_state.messages)
+        response_text = st.empty()
+        # get response from groq
+        chat_completion = client.chat.completions.create(
+            messages=[
+                {
+                    "role": message["role"],
+                    "content": message["content"],
+                }
+                for message in st.session_state['messages']
+            ],
+            model=st.session_state['default_model'],
+            stream=True,
+        )
+        # create assistant response from groq response
+        full_response=""
+
+        for chunk in chat_completion:   
+            full_response += chunk.choices[0].delta.content or ""
+            response_text.markdown(full_response)
+    
+        # add assistant message to chat history
+        st.session_state.messages.append({'role': 'assistant', 'content': full_response})
+        print(st.session_state.messages)
